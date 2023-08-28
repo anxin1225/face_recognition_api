@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Get version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
@@ -42,4 +45,4 @@ jobs:
         push: true
         cache-from: type=gha
         cache-to: type=gha,mode=max
-        tags: bianchx/face_recognition_api:${{ steps.get_version.outputs.VERSION }}
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_TOKEN }}:${{ steps.get_version.outputs.VERSION }}
