@@ -40,7 +40,6 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ steps.get_version.outputs.VERSION }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
-        tags: bianchx/face_recognition_api:${{ steps.get_version.outputs.VERSION }},${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_RELEASE_NAME }}:latest
+        tags: bianchx/face_recognition_api:${{ steps.get_version.outputs.VERSION }}
