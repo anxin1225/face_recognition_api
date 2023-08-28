@@ -31,8 +31,8 @@ def upload_image():
     # 图片上传失败，输出以下html代码
     return '''
     <!doctype html>
-    <title>Is this a picture of Obama?</title>
-    <h1>Upload a picture and see if it's a picture of Obama!</h1>
+    <title>Get face encodings</title>
+    <h1>Upload a picture and Get face encodings!</h1>
     <form method="POST" enctype="multipart/form-data">
     <input type="file" name="file">
     <input type="submit" value="Upload">
