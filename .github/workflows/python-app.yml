@@ -38,5 +38,9 @@ jobs:
       name: Build and push
       uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
       with:
+        context: .
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_RELEASE_NAME }}:${{ steps.get_version.outputs.VERSION }},${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_RELEASE_NAME }}:latest
+        tags: ${{ steps.get_version.outputs.VERSION }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        tags: bianchx/face_recognition_api:${{ steps.get_version.outputs.VERSION }},${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.PROJECT_RELEASE_NAME }}:latest
