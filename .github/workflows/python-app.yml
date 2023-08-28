@@ -45,4 +45,4 @@ jobs:
         push: true
         cache-from: type=gha
         cache-to: type=gha,mode=max
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_TOKEN }}:${{ steps.get_version.outputs.VERSION }}
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/$PROJECT_RELEASE_NAME:${{ steps.get_version.outputs.VERSION }}
