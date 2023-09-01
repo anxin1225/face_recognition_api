@@ -38,6 +38,17 @@ def upload_image():
     </form>
     '''
 
+@app.route('/standard_threshold', methods=['GET'])
+def standard_threshold():
+    result = {
+        "standard_ear_threshold": sub_functions.standard_ear_threshold,
+        "standard_mar_threshold": sub_functions.standard_mar_threshold,
+        "standard_turn_head_left_threshold": -sub_functions.standard_turn_head_threshold,
+        "standard_turn_head_right_threshold": sub_functions.standard_turn_head_threshold,
+    }
+
+    return jsonify(result)
+
 @app.route('/match', methods=['GET', 'POST'])
 def face_match():
     if request.is_json != True:
@@ -87,8 +98,6 @@ def analysis_faces_in_image(file_stream):
     result = {
         "faces": faces
     }
-
-    print(result)
 
     #return json.dumps(result, cls=NumpyArrayEncoder)
     return jsonify(result)
