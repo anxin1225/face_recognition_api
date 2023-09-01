@@ -2,6 +2,7 @@ import face_recognition
 from flask import Flask, jsonify, request, redirect
 import json
 import numpy as np
+import sub_functions
 
 # You can change this to any folder on your system
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -61,15 +62,21 @@ def face_match():
 
 def analysis_faces_in_image(file_stream):
     img = face_recognition.load_image_file(file_stream)
-
     
     face_locations = face_recognition.face_locations(img)
-    unknown_face_encodings = face_recognition.face_encodings(img, face_locations)
+    face_encodings = face_recognition.face_encodings(img, face_locations)
+    face_landmarks = sub_functions.face_landmarks(img, face_locations)
 
     faces = []
 
-    for (top, right, bottom, left), face_encoding in zip(face_locations, unknown_face_encodings):
+    for (top, right, bottom, left), face_encoding, face_landmark in zip(face_locations, face_encodings, face_landmarks):
         faces.append({
+            "features":{
+                "head_turn_type": sub_functions.get_turn_head_type(face_landmark),
+                "is_left_eye_open": sub_functions.is_left_eye_open(face_landmark),
+                "is_right_eye_open": sub_functions.is_right_eye_open(face_landmark),
+                "is_mouth_open": sub_functions.is_mouth_open(face_landmark),
+            },
             "rect":{
                 "top": top,
                 "right": right,
