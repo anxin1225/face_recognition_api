@@ -1,5 +1,4 @@
 import face_recognition
-from scipy.spatial import distance as dist
 import os
 import math
 
@@ -21,8 +20,8 @@ def get_turn_head_value(face_landmarks):
 
     return (ld - rd) / min(ld, rd)
 
-def get_turn_head_type(value, turn_threshold):
-    return get_turn_head_type_with_value(face_landmarks, turn_threshold)
+def get_turn_head_type(face_landmarks, turn_threshold):
+    return get_turn_head_type_with_value(get_turn_head_value(face_landmarks), turn_threshold)
 
 def get_turn_head_type_with_value(value, turn_threshold):
     if is_turn_head_left_with_value(value, turn_threshold):
@@ -33,16 +32,22 @@ def get_turn_head_type_with_value(value, turn_threshold):
     return 'none'
 
 def is_turn_head_left_with_value(value, turn_threshold):
-    return value <= -turn_threshold
+    if value <= -turn_threshold:
+        return True
+
+    return False
 
 def is_turn_head_left(face_landmarks, turn_threshold):
-    return is_turn_head_left_with_value(turn_head(face_landmarks), turn_threshold)
+    return is_turn_head_left_with_value(get_turn_head_value(face_landmarks), turn_threshold)
 
 def is_turn_head_right_with_value(value, turn_threshold):
-    return value >= turn_threshold
+    if value >= turn_threshold:
+        return True
+
+    return False
 
 def is_turn_head_right(face_landmarks, turn_threshold):
-    return is_turn_head_right_with_value(turn_head(face_landmarks), turn_threshold)
+    return is_turn_head_right_with_value(get_turn_head_value(face_landmarks), turn_threshold)
 
 def _get_distance(p1, p2):
     return abs(math.sqrt((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2))
@@ -54,20 +59,26 @@ def is_left_eye_open(face_landmarks, ear_threshold):
     eye = face_landmarks['left_eye']
     ear_value = get_ear_value(eye)
 
-    return ear_value > ear_threshold
+    if ear_value > ear_threshold:
+        return True
+    
+    return False
 
 def is_right_eye_open(face_landmarks, ear_threshold):
     eye = face_landmarks['right_eye']
     ear_value = get_ear_value(eye)
 
-    return ear_value > ear_threshold
+    if ear_value > ear_threshold:
+        return True
+
+    return False
 
 
 def get_ear_value(eye):
-    A = dist.euclidean(eye[1], eye[5])
-    B = dist.euclidean(eye[2], eye[4])
+    A = _get_distance(eye[1], eye[5])
+    B = _get_distance(eye[2], eye[4])
 
-    C = dist.euclidean(eye[0], eye[3])
+    C = _get_distance(eye[0], eye[3])
 
     ear = (A + B) / (2.0 * C)
 
@@ -76,18 +87,21 @@ def get_ear_value(eye):
 
 def is_mouth_open(face_landmarks, mar_threshold):
     mouth = face_landmarks['mouth']
-    return get_mar_value(mouth) >= mar_threshold
+    if get_mar_value(mouth) >= mar_threshold:
+        return True
+    
+    return False
 
 
 def get_mar_value(mouth):
     # compute the euclidean distances between the two sets of
     # vertical mouth landmarks (x, y)-coordinates
-    A = dist.euclidean(mouth[2], mouth[10]) # 51, 59
-    B = dist.euclidean(mouth[4], mouth[8]) # 53, 57
+    A = _get_distance(mouth[2], mouth[10]) # 51, 59
+    B = _get_distance(mouth[4], mouth[8]) # 53, 57
 
     # compute the euclidean distance between the horizontal
     # mouth landmark (x, y)-coordinates
-    C = dist.euclidean(mouth[0], mouth[6]) # 49, 55
+    C = _get_distance(mouth[0], mouth[6]) # 49, 55
 
     # compute the mouth aspect ratio
     mar = (A + B) / (2.0 * C)

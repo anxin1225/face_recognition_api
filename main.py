@@ -14,7 +14,6 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_image():
-    # 检测图片是否上传成功
     if request.method == 'POST':
         if 'file' not in request.files:
             return redirect(request.url)
@@ -29,7 +28,6 @@ def upload_image():
         else:
             return '{"error":"Invalid image file format."}'
 
-    # 图片上传失败，输出以下html代码
     return '''
     <!doctype html>
     <title>Get face encodings</title>
@@ -72,10 +70,10 @@ def analysis_faces_in_image(file_stream):
     for (top, right, bottom, left), face_encoding, face_landmark in zip(face_locations, face_encodings, face_landmarks):
         faces.append({
             "features":{
-                "head_turn_type": sub_functions.get_turn_head_type(face_landmark),
-                "is_left_eye_open": sub_functions.is_left_eye_open(face_landmark),
-                "is_right_eye_open": sub_functions.is_right_eye_open(face_landmark),
-                "is_mouth_open": sub_functions.is_mouth_open(face_landmark),
+                "head_turn": sub_functions.get_turn_head_value(face_landmark),
+                "eye_left_open": sub_functions.get_ear_value(face_landmark['left_eye']),
+                "eye_right_open": sub_functions.get_ear_value(face_landmark['right_eye']),
+                "mouth_open": sub_functions.get_mar_value(face_landmark['mouth']),
             },
             "rect":{
                 "top": top,
@@ -89,6 +87,8 @@ def analysis_faces_in_image(file_stream):
     result = {
         "faces": faces
     }
+
+    print(result)
 
     #return json.dumps(result, cls=NumpyArrayEncoder)
     return jsonify(result)
